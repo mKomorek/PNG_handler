@@ -1,7 +1,7 @@
 class Chunk:
-    def __init__(self, length, sort, crc):
+    def __init__(self, length, type_of_chunk, crc):
         self.length = length
-        self.type = sort
+        self.type = type_of_chunk
         self.crc = crc
 
     def info(self):
