@@ -17,5 +17,8 @@ class PNG_handler:
     def display_file_info(self):
         self.png_file.file_info()
     
-    def display_chunks(self):
-        self.chunks_service.display_chunks()
+    def display_chunks_type(self):
+        self.chunks_service.display_chunks_type()
+
+    def display_chunks_info(self):
+        self.chunks_service.display_chunks_info()

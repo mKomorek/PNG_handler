@@ -1,9 +1,13 @@
+from model.ihdr_chunk import IHDRchunk
+
 class ChunksService:
 
     def __init__(self, chunks_data):
         self.chunks_data = chunks_data
+        self.chunk_tuples = []
         self.chunks = []
-        self.get_chunks_from_data()
+        self.parse_chunks_data()
+        self.get_chunks()
 
     def chunk_iter(self):
         total_length = len(self.chunks_data)
@@ -22,14 +26,25 @@ class ChunksService:
                     self.chunks_data[begin_chunk_data: begin_chunk_crc],
                     self.chunks_data[begin_chunk_crc: end] )
 
-    def get_chunks_from_data(self):
+    def parse_chunks_data(self):
         for chunk_length, chunk_type, chunk_data, chunk_crc in self.chunk_iter():
             chunk = (chunk_length, chunk_type, chunk_data, chunk_crc)
-            self.chunks.append(chunk)
+            self.chunk_tuples.append(chunk)
 
-    def display_chunks(self):
+    def get_chunks(self):
+        for chunk in self.chunk_tuples:
+            if chunk[1].decode() == "IHDR":
+                ihdr_chunk = IHDRchunk(chunk[0], chunk[2], chunk[3])
+                self.chunks.append(ihdr_chunk)
+
+    def display_chunks_type(self):
         print(" CHUNKS OF FILE ".center(50,'-'))
-        for chunk in self.chunks:
+        for chunk in self.chunk_tuples:
             print("---> CHUNK TYPE: %s" % chunk[1].decode())
         print("".center(50, "-"))
         print("")
+
+    def display_chunks_info(self):
+        print("CHUNK DETAIL".center(50,'-'))
+        for chunk in self.chunks:
+            chunk.display_info()

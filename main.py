@@ -7,7 +7,8 @@ if __name__ == "__main__":
     
     os.system('clear')
     png_handler.display_file_info()
-    png_handler.display_chunks()
+    png_handler.display_chunks_type()
+    png_handler.display_chunks_info()
     png_handler.display_file()
 
 
