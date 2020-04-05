@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from pngfile import PNGfile
 from chunks_service import ChunksService
+from fourierplot import FourierPlot
 
 class PNG_handler:
     
@@ -9,6 +10,7 @@ class PNG_handler:
         self.path = file_path
         self.png_file = PNGfile(file_path)
         self.chunks_service = ChunksService(self.png_file.data)
+        self.fourier_plot = FourierPlot(file_path)
     
     def display_file(self):
         img = mpimg.imread(self.path)
@@ -23,3 +25,7 @@ class PNG_handler:
 
     def display_chunks_info(self):
         self.chunks_service.display_chunks_info()
+
+    def display_fourier_transform(self):
+        self.fourier_plot.show_compare()
+        self.fourier_plot.show()
