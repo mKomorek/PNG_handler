@@ -21,6 +21,7 @@ class PNGfile:
         print(" FILE INFO ".center(50, "-"))
         print("---> PATH:", self.path)
         print("---> EXTENSION: PNG")
+        print("---> MAGIC NUMBER: 89 50 4E 47 0D 0A 1A 0A")
         print("---> SIZE:", self.size, "bytes")
         print("".center(50, "-"))
         print("")

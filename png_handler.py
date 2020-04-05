@@ -4,6 +4,7 @@ from pngfile import PNGfile
 from chunks_service import ChunksService
 
 class PNG_handler:
+    
     def __init__(self, file_path):
         self.path = file_path
         self.png_file = PNGfile(file_path)

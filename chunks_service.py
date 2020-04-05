@@ -1,4 +1,6 @@
 from model.ihdr_chunk import IHDRchunk
+from model.plte_chunk import PLTEchunk
+from model.idat_chunk import IDATchunk
 
 class ChunksService:
 
@@ -36,6 +38,14 @@ class ChunksService:
             if chunk[1].decode() == "IHDR":
                 ihdr_chunk = IHDRchunk(chunk[0], chunk[2], chunk[3])
                 self.chunks.append(ihdr_chunk)
+            if chunk[1].decode() == "PLTE":
+                plte_chunk = PLTEchunk(chunk[0], chunk[2], chunk[3])
+                self.chunks.append(plte_chunk)
+            if chunk[1].decode() == "IDAT":
+                idat_chunk = IDATchunk(chunk[0], chunk[2], chunk[3], self.chunks[0].width, self.chunks[0].color_type)
+                if self.chunks[0].color_type == 3:
+                    idat_chunk.apply_palette(self.chunks[1].paletes)
+                self.chunks.append(idat_chunk)
 
     def display_chunks_type(self):
         print(" CHUNKS OF FILE ".center(50,'-'))
