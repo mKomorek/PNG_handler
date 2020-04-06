@@ -1,15 +1,17 @@
+from constants import TextColors, PNG_MAGIC_NUMBER
 from model.ihdr_chunk import IHDRchunk
 from model.plte_chunk import PLTEchunk
 from model.idat_chunk import IDATchunk
+from model.iend_chunk import IENDchunk
+from model.ancillary_chunks import tIMEChunk, cHRMChunk
 
 class ChunksService:
 
     def __init__(self, chunks_data):
         self.chunks_data = chunks_data
-        self.chunk_tuples = []
         self.chunks = []
+        self.idat_data_list = []
         self.parse_chunks_data()
-        self.get_chunks()
 
     def chunk_iter(self):
         total_length = len(self.chunks_data)
@@ -30,31 +32,61 @@ class ChunksService:
 
     def parse_chunks_data(self):
         for chunk_length, chunk_type, chunk_data, chunk_crc in self.chunk_iter():
-            chunk = (chunk_length, chunk_type, chunk_data, chunk_crc)
-            self.chunk_tuples.append(chunk)
-
-    def get_chunks(self):
-        for chunk in self.chunk_tuples:
-            if chunk[1].decode() == "IHDR":
-                ihdr_chunk = IHDRchunk(chunk[0], chunk[2], chunk[3])
-                self.chunks.append(ihdr_chunk)
-            if chunk[1].decode() == "PLTE":
-                plte_chunk = PLTEchunk(chunk[0], chunk[2], chunk[3])
+            if chunk_type.decode() == "IHDR":
+                self.ihdr_chunk = IHDRchunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(self.ihdr_chunk)
+            if chunk_type.decode() == "PLTE":
+                plte_chunk = PLTEchunk(chunk_length, chunk_type, chunk_data, chunk_crc)
                 self.chunks.append(plte_chunk)
-            if chunk[1].decode() == "IDAT":
-                idat_chunk = IDATchunk(chunk[0], chunk[2], chunk[3], self.chunks[0].width, self.chunks[0].color_type)
-                if self.chunks[0].color_type == 3:
-                    idat_chunk.apply_palette(self.chunks[1].paletes)
+            if chunk_type.decode() == "IDAT":
+                idat_chunk = IDATchunk(chunk_length, chunk_type, chunk_data, chunk_crc, self.chunks[0].width, self.chunks[0].color_type)
                 self.chunks.append(idat_chunk)
+                self.idat_data_list.append(chunk_data)
+            if chunk_type.decode() == "IEND":
+                iend_chunk = IENDchunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(iend_chunk)
+            if chunk_type.decode() == "cHRM":
+                chrm_chunk = cHRMChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(chrm_chunk)
+            if chunk_type.decode() == "tIME":
+                time_chunk = tIMEChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(time_chunk)
+
+    def create_clean_file(self, file_name):
+        critical_chunks = [b'IHDR', b'IDAT', b'IEND']
+        if self.ihdr_chunk.color_type == 3:
+            critical_chunks.insert(1, b'PLTE')
+
+        new_file = open(file_name, 'wb')
+        new_file.write(PNG_MAGIC_NUMBER)
+        for chunk in self.chunks:
+            if chunk.type in critical_chunks:
+                new_file.write(chunk.length)
+                new_file.write(chunk.type)
+                new_file.write(chunk.data)
+                new_file.write(chunk.crc)
+        new_file.close()
+
+    def display_from_IDATs(self):
+        data = b"".join(self.idat_data_list)
+        idat_chunk = IDATchunk(b"", b"", data, b"", self.ihdr_chunk.width, self.ihdr_chunk.color_type)
+        idat_chunk.data_parser()
+        if idat_chunk.color_type == 3:
+            idat_chunk.apply_palette(self.chunks[1].paletes)
+        idat_chunk.display_image_from_recostrucrion_data()
 
     def display_chunks_type(self):
-        print(" CHUNKS OF FILE ".center(50,'-'))
-        for chunk in self.chunk_tuples:
-            print("---> CHUNK TYPE: %s" % chunk[1].decode())
-        print("".center(50, "-"))
+        print(TextColors.BOLD + TextColors.HEADER + " CHUNKS OF FILE ".center(50,'-') + TextColors.ENDC)
+        for chunk in self.chunks:
+            print("---> CHUNK TYPE: ", TextColors.setValueColor(chunk.type.decode()))
+        print(TextColors.BOLD + TextColors.HEADER + "".center(50, "-") + TextColors.ENDC)
         print("")
 
     def display_chunks_info(self):
-        print("CHUNK DETAIL".center(50,'-'))
+        print(TextColors.BOLD + TextColors.HEADER + " CHUNK DETAIL ".center(50,'-') + TextColors.ENDC)
         for chunk in self.chunks:
             chunk.display_info()
+        print(TextColors.BOLD + TextColors.HEADER + "".center(50, "-") + TextColors.ENDC)
+        print("")
+
+    

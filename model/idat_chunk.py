@@ -1,6 +1,8 @@
 import zlib 
 import matplotlib.pyplot as plt
 import numpy as np
+from constants import TextColors
+from model.base_chunk import baseCHUNK
 
 def get_byte_per_pixel(argument):
     switcher = {
@@ -12,21 +14,16 @@ def get_byte_per_pixel(argument):
     }
     return switcher.get(argument, "Not found")
 
-class IDATchunk :
-    def __init__(self, length, data, crc, width, color_type):
-        self.length = int.from_bytes(length, byteorder='big')
-        self.type = "IDAT"
-        self.data = data
-        self.crc = crc
+class IDATchunk (baseCHUNK) :
+    def __init__(self, length, chunkType, data, crc, width, color_type):
+        super().__init__(length, chunkType, data, crc)
         self.width = width
         self.color_type = color_type
         self.bytes_per_pixel = get_byte_per_pixel(color_type)
-        self.data_parser()
         
     def data_parser(self):
         self.data = zlib.decompress(self.data)
         self.height = (int)( len(self.data) / (1 + self.width*self.bytes_per_pixel) )
-        print(self.height)
         self.reconstructed_data = []
         stride = self.width * self.bytes_per_pixel
         i = 0
@@ -89,11 +86,10 @@ class IDATchunk :
 
     def display_info(self):
         print()
-        print("---> CHUNK LENGHT: ", self.length)
-        print("---> CHUNK TYPE: IHDR")
-        print("---> CHUNK CRC: ", self.crc) # wyświetlenie CRC
-        print("---> CHUNK DATA: ")
-        print("     > DISPALY IMAGE FROM RECONSTRUCTED PIXEL DATA")
+        self.display_basic_info()
+        print("---> CHUNK DATA: HUGE STRING OF BYTES...")
+        print()
+
+    def display_image_from_recostrucrion_data(self):
         plt.imshow(np.array(self.reconstructed_data).reshape((self.height, self.width, self.bytes_per_pixel)))
         plt.show()
-        print()

@@ -1,5 +1,5 @@
 import os
-from chunks_service import ChunksService
+from constants import TextColors
 
 class PNGfile:
     
@@ -18,11 +18,11 @@ class PNGfile:
         assert self.data[:8] == b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'
 
     def file_info(self):
-        print(" FILE INFO ".center(50, "-"))
-        print("---> PATH:", self.path)
-        print("---> EXTENSION: PNG")
-        print("---> MAGIC NUMBER: 89 50 4E 47 0D 0A 1A 0A")
-        print("---> SIZE:", self.size, "bytes")
-        print("".center(50, "-"))
+        print(TextColors.BOLD + TextColors.HEADER + " FILE INFO ".center(50, "-") + TextColors.ENDC)
+        print("---> PATH: ", TextColors.setValueColor(self.path))
+        print("---> EXTENSION: ", TextColors.setValueColor("PNG"))
+        print("---> MAGIC NUMBER: ", TextColors.setValueColor("89 50 4E 47 0D 0A 1A 0A"))
+        print("---> SIZE:", TextColors.setValueColor(str(self.size)), TextColors.setValueColor("bytes"))
+        print(TextColors.BOLD + TextColors.HEADER + "".center(50, "-") + TextColors.ENDC)
         print("")
         

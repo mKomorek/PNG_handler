@@ -29,3 +29,10 @@ class PNG_handler:
     def display_fourier_transform(self):
         self.fourier_plot.show_compare()
         self.fourier_plot.show()
+
+    def display_from_reconstructed_idats(self):
+        self.chunks_service.display_from_IDATs()
+    
+    def create_clean_file(self):
+        file_name = input("Enter the name of file: ")
+        self.chunks_service.create_clean_file(file_name)
