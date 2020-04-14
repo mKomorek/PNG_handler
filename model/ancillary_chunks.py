@@ -55,23 +55,17 @@ class cHRMChunk (baseCHUNK):
         print("     > BLUE Y: ", TextColors.setValueColor(str(self.blue_y)))
         print()
 
-class tEXtChunk (baseCHUNK):
+class gAMAChunk (baseCHUNK):
     def __init__(self, length, chunkType, data, crc):
-        super().__init__(length)
+        super().__init__(length, chunkType, data, crc)
         self.data_parser()
 
     def data_parser(self):
-        def decode_f(x):
-            return x.decode("utf-8")
-        self.data = [instance.split(b"\x00") for instance in self.data]
-        self.data = [list(map(decode_f, instance_split)) for instance_split in self.data]
-        for instance in self.data:
-            instance[0] = instance[0].upper()
+        self.gamma_value = int.from_bytes(self.data, "big")/100000
 
-    def details(self):
+    def display_info(self):
         print()
         self.display_basic_info()
         print("---> CHUNK DATA: ")
-        for instance in self.data:
-            print("     > {keyword}: {content}".format(keyword=instance[0], content=instance[1]))
+        print("     > GAMMA VALUE: ", TextColors.setValueColor(str(self.gamma_value)))
         print()

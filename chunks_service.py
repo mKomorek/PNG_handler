@@ -3,12 +3,13 @@ from model.ihdr_chunk import IHDRchunk
 from model.plte_chunk import PLTEchunk
 from model.idat_chunk import IDATchunk
 from model.iend_chunk import IENDchunk
-from model.ancillary_chunks import tIMEChunk, cHRMChunk
+from model.ancillary_chunks import tIMEChunk, cHRMChunk, gAMAChunk
 
 class ChunksService:
 
     def __init__(self, chunks_data):
         self.chunks_data = chunks_data
+        self.chunks_type = []
         self.chunks = []
         self.idat_data_list = []
         self.parse_chunks_data()
@@ -51,9 +52,10 @@ class ChunksService:
             if chunk_type.decode() == "tIME":
                 time_chunk = tIMEChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
                 self.chunks.append(time_chunk)
-            if chunk_type.decode() == "tEXt":
-                time_chunk = tIMEChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
-                self.chunks.append(time_chunk)
+            if chunk_type.decode() == "gAMA":
+                gAMA_chunk = gAMAChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(gAMA_chunk)
+            self.chunks_type.append(chunk_type)
 
     def create_clean_file(self, file_name):
         critical_chunks = [b'IHDR', b'IDAT', b'IEND']
@@ -80,8 +82,8 @@ class ChunksService:
 
     def display_chunks_type(self):
         print(TextColors.BOLD + TextColors.HEADER + " CHUNKS OF FILE ".center(50,'-') + TextColors.ENDC)
-        for chunk in self.chunks:
-            print("---> CHUNK TYPE: ", TextColors.setValueColor(chunk.type.decode()))
+        for chunk_type in self.chunks_type:
+            print("---> CHUNK TYPE: ", TextColors.setValueColor(chunk_type.decode()))
         print(TextColors.BOLD + TextColors.HEADER + "".center(50, "-") + TextColors.ENDC)
         print("")
 
