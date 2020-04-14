@@ -51,6 +51,9 @@ class ChunksService:
             if chunk_type.decode() == "tIME":
                 time_chunk = tIMEChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
                 self.chunks.append(time_chunk)
+            if chunk_type.decode() == "tEXt":
+                time_chunk = tIMEChunk(chunk_length, chunk_type, chunk_data, chunk_crc)
+                self.chunks.append(time_chunk)
 
     def create_clean_file(self, file_name):
         critical_chunks = [b'IHDR', b'IDAT', b'IEND']
