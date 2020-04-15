@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 class FourierPlot:
     def __init__(self, path):
         self.path = path
-        self.img = cv2.imread(self.path,0) 
+        self.img = ~cv2.imread(self.path,0) 
         
     def show(self):
         f = np.fft.fft2(self.img) #procesing image
