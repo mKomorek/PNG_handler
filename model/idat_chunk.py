@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from constants import TextColors
 from model.base_chunk import baseCHUNK
+from RSA.rsa import RSA
 
 def get_byte_per_pixel(argument):
     switcher = {
@@ -20,6 +21,16 @@ class IDATchunk (baseCHUNK) :
         self.width = width
         self.color_type = color_type
         self.bytes_per_pixel = get_byte_per_pixel(color_type)
+        self.initRsa()
+
+    def initRsa(self):
+        data = self.data
+        key_size = 1024
+        step = key_size // 8 - 1
+        data = [data[i:i+step] for i in range(0, len(data), step)]
+        data = [bytearray(slice) for slice in data]
+        data_sizes = [int.from_bytes(slice, 'big') for slice in data]
+        self.rsa = RSA(max(data_sizes), key_size)
         
     def data_parser(self):
         self.data = zlib.decompress(self.data)
@@ -90,6 +101,25 @@ class IDATchunk (baseCHUNK) :
         print("---> CHUNK DATA: HUGE STRING OF BYTES...")
         print()
 
+    # a special method for cbc encryption may have too large numbers which by 
+    # default will be projected by python onto some other type
+    def display_image_from_recostrucrion_data_encryption_cbc(self):
+        temp = list(map(float, self.reconstructed_data))
+        plt.imshow(np.array(temp).reshape((self.height, self.width, self.bytes_per_pixel)))
+        plt.show()
+
     def display_image_from_recostrucrion_data(self):
         plt.imshow(np.array(self.reconstructed_data).reshape((self.height, self.width, self.bytes_per_pixel)))
         plt.show()
+
+    def encryption_ecb(self):
+        self.reconstructed_data = self.rsa.encryption_ecb(self.reconstructed_data)
+
+    def decryption_ecb(self):
+        self.reconstructed_data = self.rsa.decryption_ecb(self.reconstructed_data)
+
+    def encryption_cbc(self):
+        self.reconstructed_data = self.rsa.encryption_cbc(self.reconstructed_data)
+
+    def decryption_cbc(self):
+        self.reconstructed_data = self.rsa.decryption_cbc(self.reconstructed_data)

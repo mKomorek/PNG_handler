@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from pngfile import PNGfile
 from chunks_service import ChunksService
-from fourierplot import FourierPlot
+from fourierplot.fourierplot import FourierPlot
 
 class PNG_handler:
     
@@ -36,3 +36,9 @@ class PNG_handler:
     def create_clean_file(self):
         file_name = input("Enter the name of file: ")
         self.chunks_service.create_clean_file(file_name)
+
+    def make_encryption_ecb(self):
+        self.chunks_service.make_encryption_ecb()
+
+    def make_encryption_cbc(self):
+        self.chunks_service.make_encryption_cbc()

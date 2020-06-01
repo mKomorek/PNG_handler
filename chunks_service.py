@@ -72,12 +72,16 @@ class ChunksService:
                 new_file.write(chunk.crc)
         new_file.close()
 
-    def display_from_IDATs(self):
+    def parse_to_one_IDAT(self):
         data = b"".join(self.idat_data_list)
         idat_chunk = IDATchunk(b"", b"", data, b"", self.ihdr_chunk.width, self.ihdr_chunk.color_type)
         idat_chunk.data_parser()
         if idat_chunk.color_type == 3:
             idat_chunk.apply_palette(self.chunks[1].paletes)
+        return idat_chunk
+
+    def display_from_IDATs(self):
+        idat_chunk = self.parse_to_one_IDAT()
         idat_chunk.display_image_from_recostrucrion_data()
 
     def display_chunks_type(self):
@@ -94,4 +98,23 @@ class ChunksService:
         print(TextColors.BOLD + TextColors.HEADER + "".center(50, "-") + TextColors.ENDC)
         print("")
 
-    
+    def make_encryption_ecb(self):
+        idat_chunk = self.parse_to_one_IDAT()
+        idat_chunk.encryption_ecb()
+        idat_chunk.display_image_from_recostrucrion_data()
+
+        idat_chunk.decryption_ecb()
+        idat_chunk.display_image_from_recostrucrion_data()
+
+    def make_encryption_cbc(self):
+        idat_chunk = self.parse_to_one_IDAT()
+        idat_chunk.encryption_cbc()
+        idat_chunk.display_image_from_recostrucrion_data_encryption_cbc()
+
+        idat_chunk.decryption_cbc()
+        idat_chunk.display_image_from_recostrucrion_data()
+
+
+
+
+

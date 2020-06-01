@@ -9,9 +9,14 @@ def submenu(png_handler):
     F: Display file information
     D: Display chunk types 
     C: Display chunk informations 
+
     K: Display file
     R: Display file from reconstructed IDAT chunks
+
     T: Perform DFT and display output
+    E: Encrypt the file (ECB)
+    B: Encrypt the file (CBC)
+    
     S: Clear file and save   
     N: Back to menu \n \n"""
     + TextColors.setValueColor("""    > Your choice: """))
@@ -44,6 +49,14 @@ def submenu(png_handler):
     elif choice=="S" or choice=="s":
         os.system('clear')
         png_handler.create_clean_file()
+
+    elif choice=="E" or choice=="e":
+        os.system('clear')
+        png_handler.make_encryption_ecb()
+
+    elif choice=="B" or choice=="b":
+        os.system('clear')
+        png_handler.make_encryption_cbc()
 
     elif choice=="N" or choice=="n":
         os.system('clear')
