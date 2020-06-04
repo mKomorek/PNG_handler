@@ -16,6 +16,7 @@ def submenu(png_handler):
     T: Perform DFT and display output
     E: Encrypt the file (ECB)
     B: Encrypt the file (CBC)
+    L: Encrypt the file (library)
     
     S: Clear file and save   
     N: Back to menu \n \n"""
@@ -57,6 +58,10 @@ def submenu(png_handler):
     elif choice=="B" or choice=="b":
         os.system('clear')
         png_handler.make_encryption_cbc()
+
+    elif choice=="L" or choice=="l":
+        os.system('clear')
+        png_handler.make_encryption_library()
 
     elif choice=="N" or choice=="n":
         os.system('clear')

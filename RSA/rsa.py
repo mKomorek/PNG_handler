@@ -1,11 +1,14 @@
 import os
 import sys 
 import random
+import Crypto
+from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.PublicKey import RSA
 from constants import TextColors
 from decimal import Decimal
 from RSA.rsa_math import RSAmath
 
-class RSA():
+class _RSA():
     def __init__(self, m, key_size=1024):
         self.key_size = key_size
         self.rsa_math = RSAmath()
@@ -96,7 +99,7 @@ class RSA():
                     encrypted_data.append(int.from_bytes(encrypted_bytes[j:], 'big'))
 
         return encrypted_data
-
+   
     def decryption_cbc(self, encrypted_data):
         decrypted_data = []
         prev_xor = self.cbc_vector
@@ -128,3 +131,25 @@ class RSA():
                 decrypted_data.append(byte)
 
         return decrypted_data
+
+    def encryption_library(self, data_to_encrypt):
+        encrypted_data = []
+        key = RSA.construct((self.public_key[1] , self.public_key[0]))
+        cipher = PKCS1_OAEP.new(key)  
+
+        for i in range(0, len(data_to_encrypt), 63):
+            if i % 6300 == 0:
+                os.system('clear')
+                print(TextColors.OKGREEN + "Encrypting...".ljust(i//25000, '#') + TextColors.ENDC)
+            
+            raw_bytes = bytearray(data_to_encrypt[i:i+63])
+            encrypted_bytes = cipher.encrypt(raw_bytes)
+                
+            for j in range(0, len(raw_bytes)):
+                if j < len(raw_bytes)-1:
+                    encrypted_data.append(encrypted_bytes[j])
+                else:
+                    encrypted_data.append(int.from_bytes(encrypted_bytes[j:], 'big'))
+
+        return encrypted_data
+        

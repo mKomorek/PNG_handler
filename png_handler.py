@@ -42,3 +42,6 @@ class PNG_handler:
 
     def make_encryption_cbc(self):
         self.chunks_service.make_encryption_cbc()
+
+    def make_encryption_library(self):
+        self.chunks_service.make_encryption_library()

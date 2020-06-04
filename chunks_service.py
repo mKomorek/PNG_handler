@@ -114,7 +114,8 @@ class ChunksService:
         idat_chunk.decryption_cbc()
         idat_chunk.display_image_from_recostrucrion_data()
 
-
-
-
+    def make_encryption_library(self):
+        idat_chunk = self.parse_to_one_IDAT()
+        idat_chunk.encryption_library()
+        idat_chunk.display_image_from_recostrucrion_data_encryption_cbc()
 

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from constants import TextColors
 from model.base_chunk import baseCHUNK
-from RSA.rsa import RSA
+from RSA.rsa import _RSA
 
 def get_byte_per_pixel(argument):
     switcher = {
@@ -30,7 +30,7 @@ class IDATchunk (baseCHUNK) :
         data = [data[i:i+step] for i in range(0, len(data), step)]
         data = [bytearray(slice) for slice in data]
         data_sizes = [int.from_bytes(slice, 'big') for slice in data]
-        self.rsa = RSA(max(data_sizes), key_size)
+        self.rsa = _RSA(max(data_sizes), key_size)
         
     def data_parser(self):
         self.data = zlib.decompress(self.data)
@@ -123,3 +123,7 @@ class IDATchunk (baseCHUNK) :
 
     def decryption_cbc(self):
         self.reconstructed_data = self.rsa.decryption_cbc(self.reconstructed_data)
+
+    def encryption_library(self):
+        self.reconstructed_data = self.rsa.encryption_library(self.reconstructed_data)
+
